@@ -20,4 +20,6 @@ Note: currently, deploys that use db_cluster_all as targets are excluded from
 the output as they signify automated deploys most of the time. This can easily
 be activated in code.
 
+Note: sphinx-search deploys not yet included
+
 Additions (PR) and questions (issues) welcome.
