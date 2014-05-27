@@ -1,0 +1,17 @@
+{
+  "name": "deploylog",
+  "description": "Gathers log information from elastic search and displays it in a reasonable manner.",
+  "author": "Gilbert Jeiziner",
+  "version": "0.0.1",
+  "dependencies": {
+    "cli-color": "^0.3.2",
+    "nosql": "^2.0.7",
+    "elasticsearch": "^2.2.0",
+    "moment": "^2.6.0",
+    "nconf": "^0.6.9",
+    "underscore": "^1.6.0",
+    "mustache": "^0.8.1"
+  },
+  "engine": "node >= 0.10"
+}
+
