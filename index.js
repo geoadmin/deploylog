@@ -73,6 +73,8 @@ var output = function() {
           proj = 'API';
         } else if (msg.match('mf-geoadmin3')) {
           proj = 'MAP';
+        } else if (msg.match('sphinxsearch')) {
+          proj = 'SPHINX';
         } else {
           writeErrorLine(msg);
           throw new Error('could not parse line. No proj found');
@@ -148,15 +150,14 @@ var updateDB = function() {
       if (mostRecent &&
           mostRecent[0]) {
         rDate = new Date(mostRecent[0]._source['@timestamp']);
-        console.log(mostRecent);
         matches = mostRecent[0]._index.match(/logstash-(\d{4})\.(\d{2})\.(\d{2})/);
         var now = new Date();
         lastIndexDate = new Date(matches[1], matches[2] - 1, matches[3]);
         while (lastIndexDate <= now) {
           if (index != '') {
-            index += ', ';
+            index += ',';
           }
-          index += 'logstash-' + lastIndexDate.getFullYear() + '.' + (lastIndexDate.getMonth() + 1) + '.' + lastIndexDate.getDate();
+          index += 'logstash-' + moment(lastIndexDate).format('YYYY.MM.DD');
           lastIndexDate.setDate(lastIndexDate.getDate() + 1);
         }
         timeFilter = '+@timestamp:{' + rDate.valueOf() + ' TO ' + Date.now().valueOf() + ']';
@@ -165,7 +166,7 @@ var updateDB = function() {
       var query = {
         index: index,
         q: '+type:"system" ' +
-           '+message:("/var/www/vhosts/mf-chsdi3" OR "/var/www/vhosts/mf-geoadmin3" OR "/home/deploy/deploy-database") ' +
+           '+message:("/var/www/vhosts/mf-chsdi3" OR "/var/www/vhosts/mf-geoadmin3" OR "/home/deploy/deploy-database" OR "sphinxsearch") ' +
            '+message:"/bin/deploy -r" ' + timeFilter,
         searchType: 'count'
       };
@@ -196,11 +197,12 @@ var updateDB = function() {
                 console.log('Inserting into db');
                 nosql.insert(rec);
               });
+              nosql.update();
 
-              if (res.hits.total != r.length) {
+              if (res.hits.total != rawResults.length) {
                 console.log('ERROR: Not all results!', res.hits.total);
               } else {
-                console.log('all results there', r.length);
+                console.log('all results there', rawResults.length);
               }
             } else {
               console.log('Now New Results found', error);
